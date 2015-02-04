@@ -2,6 +2,8 @@
 class BaseController extends Controller{
 	
 	protected $mModel;
+	protected $filternames = array('per','page','pluck');
+	protected $filterdefaults = array('per'=>10,'page'=>1);
 
 	function respondJSONCode($pCode){
 		$msg = "Unknown Error.";
@@ -26,8 +28,6 @@ class BaseController extends Controller{
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Place the loaded model
-	 * @throws CHttpException
 	 */
 	public function loadModel($id){
 		$model = $this->mModel->findByPk($id);
@@ -40,7 +40,7 @@ class BaseController extends Controller{
 	 * Lists all models.
 	 */
 	public function actionIndex(){
-		$this->respondJSON( $this->all() );
+		$this->respondJSON( $this->filter() );
 	}
 
 	/**
@@ -53,6 +53,87 @@ class BaseController extends Controller{
 		}else{
 			$this->respondJSON( $m );	
 		}
+	}
+
+	public function applyFilter($pDBCriteria,$pFilter){
+		switch($pFilter['f']){
+			case 'per':{
+				if(intval($pFilter['v']) > 0){
+					$pDBCriteria->limit = $pFilter['v'];
+				}
+				break;
+			}
+			case 'page':{
+				if(intval($pFilter['v']) > 0){
+					if($pDBCriteria->limit < 0){
+						$pDBCriteria->limit = $this->filterdefaults['per'];
+					}
+					$pDBCriteria->offset = $pDBCriteria->limit * (intval($pFilter['v'])-1);
+				}
+				break;
+			}
+		}
+	}
+
+
+	public function filter(){
+		$fs = $this->getFilters();
+		$criteria = new CDbCriteria();
+		$criteria->limit = -1;
+		
+		//Apply Filters like pagination
+		foreach($fs as $f){
+			$this->applyFilter($criteria,$f);
+		}
+
+		//Conditions based on the Model Attributes
+		$attrs = $this->getConditions();
+		$params = array();
+		$pfx = ":p";
+		$pc = 0;
+		foreach ($attrs as $key => $value) {
+			$pid = $pfx . $pc;
+			$criteria->addCondition( $key . " = " . $pid );
+			$params[$pid] = $value;
+		}
+		$criteria->params = $params;
+
+		return  Util::model2Array( $this->mModel->findAll($criteria) );
+	}
+
+	/**
+	* 	Get conditions based on the request values and the Model attributes
+	*/
+	public function getConditions(){
+		$attrs = array();
+		if(count($_GET) == 0)return $attrs;
+
+		$cc = 0;//condition counter
+		foreach ($this->mModel->attributes as $key => $value) {
+			$k = strtolower($key);
+			if(isset($_GET[$k])){
+				$cc++;
+				$attrs[$key] = $_GET[$k];
+			}
+			if($cc >= count($_GET))
+				break;
+		}
+		return $attrs;
+	}
+
+	/**
+	*	Get Request Filters
+	*/
+	public function getFilters(){
+		$fltrs = array();
+		if(count($_GET) == 0)return $fltrs;
+		
+		foreach ($this->filternames as $f) {
+			if(isset($_GET[$f]) ){
+				array_push($fltrs,array('f'=>$f,'v'=>$_GET[$f]));
+			}
+		}
+		return $fltrs;
 	}
 }
 ?>
