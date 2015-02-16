@@ -8,6 +8,7 @@ class BaseController extends Controller{
 	function respondJSONCode($pCode){
 		$msg = "Unknown Error.";
 		switch($pCode){
+			case 400: $msg = "Bad request";break;
 			case 404: $msg = "The requested element was not found.";break;
 			case 200: $msg = "Ok.";break;
 		}
@@ -28,12 +29,18 @@ class BaseController extends Controller{
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
+     * Kevin: discutir si hace falta siempre convertirlo a array, para cuando son GET esta bien, pero cuando necesito manipularlo para update o delete no tanto?
 	 */
-	public function loadModel($id){
+	public function loadModel($id, $toArray=true){
 		$model = $this->mModel->findByPk($id);
-		if($model===null)
-			return null;
-		return  Util::model2Array($model);
+        if($toArray) 
+        {
+            if($model===null)
+                return null;
+            return  Util::model2Array($model);
+        }
+        else
+            return $model;
 	}
 
 	/**
@@ -48,12 +55,79 @@ class BaseController extends Controller{
 	*/
 	public function actionView($id){
 		$m = $this->loadModel($id);
+        
 		if($m == null){
 			$this->respondJSONCode(404);
 		}else{
 			$this->respondJSON( $m );	
 		}
 	}
+    
+    /**
+    *Delete element by id
+    */
+    public function actionDelete($id){
+        $m = $this->loadModel($id, false);
+        if($m == null){
+			$this->respondJSONCode(404);
+		}else{
+            if($m->delete())
+			    $this->respondJSON( );
+            else
+                $this->respondJSON( array('action'=>'delete', 'status'=>'error', 'errors'=>$m->errors) );	
+		}
+    }
+    
+    /**
+    *Create element by raw json
+    *TODO: determinar si hace falta retornar los atributos, al menos el ID de la insersion ese si
+    */
+    public function actionCreate(){
+        $json = file_get_contents('php://input');
+        $put_vars = CJSON::decode($json,true);  //true means use associative array
+        
+        if(empty($put_vars))
+        {
+            $this->respondJSONCode( 400 );
+            Yii::app()->end();
+        }
+        
+        $m = new $this->mModel;
+        $m->attributes = $put_vars;
+        if($m->save())
+            $this->respondJSON( array('action'=>'create', 'status'=>'ok', 'attributes'=>$m->attributes) );
+        else
+            $this->respondJSON( array('action'=>'create', 'status'=>'error', 'attributes'=>$m->attributes, 'errors'=>$m->errors) );    
+    }
+    
+    /**
+    *Update element by raw json
+    *TODO: determinar si hace falta retornar los atributos, al menos el ID de la insersion ese si
+    */
+    public function actionUpdate($id){
+        $json = file_get_contents('php://input');
+        $put_vars = CJSON::decode($json,true);  //true means use associative array
+        
+        if(empty($put_vars))
+        {
+            $this->respondJSONCode( 400 );
+            Yii::app()->end();
+        }
+        
+        $m = $this->loadModel($id, false);
+        if($m == null) {
+            $this->respondJSONCode( 404 );
+            Yii::app()->end();
+        }
+        
+        $m->attributes = $put_vars;
+        if($m->save())
+            $this->respondJSON( array('action'=>'update', 'status'=>'ok', 'attributes'=>$m->attributes) );
+        else
+            $this->respondJSON( array('action'=>'update', 'status'=>'error', 'attributes'=>$m->attributes, 'errors'=>$m->errors) );    
+    }
+    
+    
 
 	public function applyFilter($pDBCriteria,$pFilter){
 		switch($pFilter['f']){

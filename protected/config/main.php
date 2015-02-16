@@ -44,7 +44,12 @@ return array(
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
+                array('<controller>/view', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'GET'),
+                array('<controller>/delete', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'DELETE'),
+                array('<controller>/create', 'pattern'=>'<controller:\w+>', 'verb'=>'POST'),
+                array('<controller>/update', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'PUT'),
+                
+				//'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
@@ -55,10 +60,10 @@ return array(
 		// uncomment the following to use a MySQL database
 		
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=EA_DATA',
+			'connectionString' => 'mysql:host=localhost;dbname=LOYICA_INSTANCE',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => '',
+			'password' => 'root123',
 			'charset' => 'utf8',
 		),
 		
