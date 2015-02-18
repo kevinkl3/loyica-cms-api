@@ -16,7 +16,7 @@
  * The followings are the available model relations:
  * @property Favorite[] $favorites
  */
-class Suscription extends CActiveRecord
+class Subscription extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -33,7 +33,7 @@ class Suscription extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'suscription';
+		return 'subscription';
 	}
 
 	/**
@@ -48,10 +48,10 @@ class Suscription extends CActiveRecord
 			array('PHONE, FACEBOOK, TWITTER, GOOGLE', 'length', 'max'=>100),
 			array('EMAIL', 'length', 'max'=>150),
 			array('FIRST_NAME, LAST_NAME', 'length', 'max'=>250),
-            array('SUSCRIPTION_ID, PHONE, FIRST_NAME, LAST_NAME, FACEBOOK, TWITTER, GOOGLE', 'safe'),
+            array('SUBSCRIPTION_ID, PHONE, FIRST_NAME, LAST_NAME, FACEBOOK, TWITTER, GOOGLE', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('SUSCRIPTION_ID, PHONE, EMAIL, FIRST_NAME, LAST_NAME, FACEBOOK, TWITTER, GOOGLE', 'safe', 'on'=>'search'),
+			array('SUBSCRIPTION_ID, PHONE, EMAIL, FIRST_NAME, LAST_NAME, FACEBOOK, TWITTER, GOOGLE', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -63,7 +63,7 @@ class Suscription extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'favorites' => array(self::HAS_MANY, 'Favorite', 'SUSCRIPCION_ID'),
+			'favorites' => array(self::HAS_MANY, 'Favorite', 'SUBSCRIPCION_ID'),
 		);
 	}
 
@@ -73,7 +73,7 @@ class Suscription extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'SUSCRIPTION_ID' => 'Suscription',
+			'SUBSCRIPTION_ID' => 'Suscription',
 			'PHONE' => 'Phone',
 			'EMAIL' => 'Email',
 			'FIRST_NAME' => 'First Name',
@@ -95,7 +95,7 @@ class Suscription extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('SUSCRIPTION_ID',$this->SUSCRIPTION_ID);
+		$criteria->compare('SUBSCRIPTION_ID',$this->SUSCRIPTION_ID);
 		$criteria->compare('PHONE',$this->PHONE,true);
 		$criteria->compare('EMAIL',$this->EMAIL,true);
 		$criteria->compare('FIRST_NAME',$this->FIRST_NAME,true);

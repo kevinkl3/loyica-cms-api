@@ -48,6 +48,7 @@ return array(
                 array('<controller>/delete', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'DELETE'),
                 array('<controller>/create', 'pattern'=>'<controller:\w+>', 'verb'=>'POST'),
                 array('<controller>/update', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'PUT'),
+                array('<controller>/labels', 'pattern'=>'<controller:\w+>/labels', 'verb'=>'GET'),
                 
 				//'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',

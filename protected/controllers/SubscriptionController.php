@@ -1,10 +1,10 @@
 <?php
 
-class SuscriptionController extends BaseController
+class SubscriptionController extends BaseController
 {
     
     protected function beforeAction( $action){
-		$this->mModel = Suscription::model();
+		$this->mModel = Subscription::model();
 		return parent::beforeAction($action);
 	}
     

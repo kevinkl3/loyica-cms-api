@@ -88,12 +88,13 @@ class BaseController extends Controller{
         
         if(empty($put_vars))
         {
-            $this->respondJSONCode( 400 );
+            $this->respondJSON( array('error'=>'Bad request', 'expected'=>json_encode($this->mModel->attributeNames())), 400 );
             Yii::app()->end();
         }
         
         $m = new $this->mModel;
         $m->attributes = $put_vars;
+        
         if($m->save())
             $this->respondJSON( array('action'=>'create', 'status'=>'ok', 'attributes'=>$m->attributes) );
         else
@@ -125,6 +126,14 @@ class BaseController extends Controller{
             $this->respondJSON( array('action'=>'update', 'status'=>'ok', 'attributes'=>$m->attributes) );
         else
             $this->respondJSON( array('action'=>'update', 'status'=>'error', 'attributes'=>$m->attributes, 'errors'=>$m->errors) );    
+    }
+    
+    /**
+    * Get model Labels
+    */
+    public function actionLabels()
+    {
+        $this->respondJSON($this->mModel->attributeLabels());
     }
     
     

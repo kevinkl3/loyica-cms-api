@@ -57,12 +57,13 @@ class Favorite extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'sUSCRIPCION' => array(self::BELONGS_TO, 'Suscription', 'SUSCRIPCION_ID'),
+			'suscription' => array(self::BELONGS_TO, 'Suscription', 'SUSCRIPCION_ID'),
 		);
 	}
 
 	/**
 	 * @return array customized attribute labels (name=>label)
+     TODO: localizacion yii::t()...
 	 */
 	public function attributeLabels()
 	{
