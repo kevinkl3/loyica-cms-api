@@ -40,7 +40,10 @@ class Util{
                 $result = $all;
             */
             
-            array_push($result, $attributes);
+            if ($arrayMode)
+                array_push($result, $attributes);
+            else
+                $result = $attributes;
         }
         return $result;
     }
