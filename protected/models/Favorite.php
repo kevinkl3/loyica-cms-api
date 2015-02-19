@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'favorite':
  * @property integer $FAVORITE_ID
- * @property integer $SUSCRIPCION_ID
+ * @property integer $SUBSCRIPTION_ID
  * @property string $TYPE
  * @property string $ELEMENT_ID
  *
@@ -40,12 +40,13 @@ class Favorite extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('SUSCRIPCION_ID, TYPE, ELEMENT_ID', 'required'),
-			array('SUSCRIPCION_ID', 'numerical', 'integerOnly'=>true),
+			array('SUBSCRIPTION_ID, TYPE, ELEMENT_ID', 'required'),
+			array('SUBSCRIPTION_ID', 'numerical', 'integerOnly'=>true),
 			array('TYPE, ELEMENT_ID', 'length', 'max'=>45),
+            array('SUBSCRIPTION_ID, TYPE, ELEMENT_ID', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('FAVORITE_ID, SUSCRIPCION_ID, TYPE, ELEMENT_ID', 'safe', 'on'=>'search'),
+			array('FAVORITE_ID, SUBSCRIPTION_ID, TYPE, ELEMENT_ID', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -57,7 +58,7 @@ class Favorite extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'suscription' => array(self::BELONGS_TO, 'Suscription', 'SUSCRIPCION_ID'),
+			'subscription' => array(self::BELONGS_TO, 'Subscription', 'SUBSCRIPTION_ID'),
 		);
 	}
 
@@ -69,7 +70,7 @@ class Favorite extends CActiveRecord
 	{
 		return array(
 			'FAVORITE_ID' => 'Favorite',
-			'SUSCRIPCION_ID' => 'Suscripcion',
+			'SUBSCRIPTION_ID' => 'Suscripcion',
 			'TYPE' => 'Type',
 			'ELEMENT_ID' => 'Element',
 		);
@@ -87,7 +88,7 @@ class Favorite extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('FAVORITE_ID',$this->FAVORITE_ID);
-		$criteria->compare('SUSCRIPCION_ID',$this->SUSCRIPCION_ID);
+		$criteria->compare('SUBSCRIPTION_ID',$this->SUBSCRIPTION_ID);
 		$criteria->compare('TYPE',$this->TYPE,true);
 		$criteria->compare('ELEMENT_ID',$this->ELEMENT_ID,true);
 

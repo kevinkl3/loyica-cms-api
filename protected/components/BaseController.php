@@ -19,6 +19,7 @@ class BaseController extends Controller{
         header('Content-type: application/json');
         header("Access-Control-Allow-Origin: *");
         echo json_encode( array('code'=>$code,'value'=>$responseValue) );
+        Yii::app()->end(); //rompe el ciclo, para que no siga con el codigo e imprima mas json, problemas de logica (eliminar este comentario si esta bien)
     }
 
     function all(){
@@ -38,6 +39,24 @@ class BaseController extends Controller{
             if($model===null)
                 return null;
             return  Util::model2Array($model);
+        }
+        else
+            return $model;
+	}
+    
+    /**
+	 * Returns the data model based on the primary key given in the GET variable.
+	 * If the data model is not found, an HTTP exception will be raised.
+	 * @param integer $id the ID of the model to be loaded
+	 * @param array[] $with string array of relations names
+	 */
+    public function loadModelWithRelations($id, array $with=null, $toArray=true){
+		$model = $this->mModel->findByPk($id);
+        if($toArray) 
+        {
+            if($model===null)
+                return null;
+            return  Util::model2Array($model, $with);
         }
         else
             return $model;
