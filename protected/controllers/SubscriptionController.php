@@ -37,7 +37,7 @@ class SubscriptionController extends BaseController
                 'verbs'=>array('DELETE')
 			),
             array('allow',  // allow all users to perform 'delete' actions
-				'actions'=>array('create', 'reward'),
+				'actions'=>array('create', 'reward', 'redeem'),
 				'users'=>array('*'),
                 'verbs'=>array('POST')
 			),
@@ -49,8 +49,10 @@ class SubscriptionController extends BaseController
 		);
 	}
     
-    public function actionReward($id) //earn reward
-    {
+    /**
+    * Earn reward points
+    */
+    public function actionReward($id) {
         $json = file_get_contents('php://input');
         $put_vars = CJSON::decode($json,true);  //true means use associative array
         
@@ -84,4 +86,46 @@ class SubscriptionController extends BaseController
             $this->respondJSON( array('action'=>'addreward', 'status'=>'error', 'attributes'=>$m->attributes, 'subscription_errors'=>$m->errors, 'rewars_log_errors'=>$log->errors) );
         }
     }
+    
+    
+    
+    public function actionRedeem($id) {
+        $json = file_get_contents('php://input');
+        $put_vars = CJSON::decode($json,true);  //true means use associative array
+        
+        //todo: add check type of $_POST[POINTS]....
+        if(empty($put_vars) || !isset($put_vars['POINTS']))
+        {
+            $this->respondJSON( "expected [POINTS, DESCRIPTION]", 400 );
+        }
+        
+        $m = $this->loadModel($id, false);
+        if($m == null) {
+            $this->respondJSONCode( 404 );
+        }
+        
+        if($put_vars['POINTS'] > $m->REWARD_POINTS) {
+            $this->respondJSON( "Cannot redeem the number of points required, there is " . $m->REWARD_POINTS . " points available", 406 );
+        }
+        
+        $desc = "";
+        if(isset($put_vars['DESCRIPTION']))
+            $desc = $put_vars['DESCRIPTION'];
+        
+        $m->REWARD_POINTS = $m->REWARD_POINTS - $put_vars['POINTS'];
+        $log = new RewardLog();
+        $log->SUBSCRIPTION_ID = $m->SUBSCRIPTION_ID;
+        $log->DESCRIPTION = $desc;
+        $log->POINTS = -1 * ($put_vars['POINTS']);
+        $log->REWARD_DATE = Util::now();
+        
+        
+        if($log->save() && $m->save()) {
+            $this->respondJSON( array('action'=>'redeem', 'status'=>'ok', 'attributes'=>$m->attributes) );
+        }
+        else {
+            $this->respondJSON( array('action'=>'redeem', 'status'=>'error', 'attributes'=>$m->attributes, 'subscription_errors'=>$m->errors, 'rewars_log_errors'=>$log->errors) );
+        }
+    }
+    
 }

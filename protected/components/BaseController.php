@@ -11,6 +11,7 @@ class BaseController extends Controller{
 			case 400: $msg = "Bad request";break;
 			case 404: $msg = "The requested element was not found.";break;
 			case 200: $msg = "Ok.";break;
+			case 406: $msg = "Not Acceptable.";break;
 		}
 		$this->respondJSON($msg,$pCode);
 	}
