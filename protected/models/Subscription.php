@@ -12,6 +12,7 @@
  * @property string $FACEBOOK
  * @property string $TWITTER
  * @property string $GOOGLE
+ * @property integer $REWARD_POINTS
  *
  * The followings are the available model relations:
  * @property Favorite[] $favorites
@@ -45,10 +46,11 @@ class Subscription extends CActiveRecord
 		// will receive user inputs.
 		return array(
             array('PHONE', 'required'),
+            array('PHONE', 'unique'),
 			array('PHONE, FACEBOOK, TWITTER, GOOGLE', 'length', 'max'=>100),
 			array('EMAIL', 'length', 'max'=>150),
 			array('FIRST_NAME, LAST_NAME', 'length', 'max'=>250),
-            array('SUBSCRIPTION_ID, PHONE, FIRST_NAME, LAST_NAME, FACEBOOK, TWITTER, GOOGLE', 'safe'),
+            array('SUBSCRIPTION_ID, PHONE, FIRST_NAME, LAST_NAME, FACEBOOK, TWITTER, GOOGLE, REWARD_POINTS', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('SUBSCRIPTION_ID, PHONE, EMAIL, FIRST_NAME, LAST_NAME, FACEBOOK, TWITTER, GOOGLE', 'safe', 'on'=>'search'),
@@ -81,6 +83,7 @@ class Subscription extends CActiveRecord
 			'FACEBOOK' => 'Facebook',
 			'TWITTER' => 'Twitter',
 			'GOOGLE' => 'Google',
+			'REWARD_POINTS' => 'Reward points earned',
 		);
 	}
 
@@ -103,6 +106,7 @@ class Subscription extends CActiveRecord
 		$criteria->compare('FACEBOOK',$this->FACEBOOK,true);
 		$criteria->compare('TWITTER',$this->TWITTER,true);
 		$criteria->compare('GOOGLE',$this->GOOGLE,true);
+		$criteria->compare('REWARD_POINTS',$this->REWARD_POINTS);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
