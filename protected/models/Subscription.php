@@ -65,7 +65,7 @@ class Subscription extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'favorites' => array(self::HAS_MANY, 'Favorite', 'SUBSCRIPCION_ID'),
+			'favorites' => array(self::HAS_MANY, 'Favorite', 'SUBSCRIPTION_ID'),
 		);
 	}
 

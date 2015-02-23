@@ -27,7 +27,7 @@ class SubscriptionController extends BaseController
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','favorites'),
 				'users'=>array('*'),
                 'verbs'=>array('GET')
 			),
@@ -127,5 +127,48 @@ class SubscriptionController extends BaseController
             $this->respondJSON( array('action'=>'redeem', 'status'=>'error', 'attributes'=>$m->attributes, 'subscription_errors'=>$m->errors, 'rewars_log_errors'=>$log->errors) );
         }
     }
+    
+    
+    /*
+    * Override view id
+    */
+    public function actionWithFavorites($id){
+
+        $s = $this->mModel->with('favorites')->find('t.SUBSCRIPTION_ID = :sid', array(':sid'=>$id));
+        
+        $result = Util::model2Array( $s );
+        
+        foreach($result['favorites'] as &$f)
+        {
+            $res = array();
+            switch(strtoupper($f['TYPE'])) {
+                case 'PRODUCT':
+                    $p = Product::model()->findByPk($f['ELEMENT_ID']);
+                    if($p instanceof Product) {
+                        $f['product'] = $p->attributes;
+                    }
+                    else {
+                        $f['product'] = 'not found';
+                    }
+                    break;
+                case 'PLACE':
+                    $p = Place::model()->findByPk($f['ELEMENT_ID']);
+                    if($p instanceof Product) {
+                        $f['place'] = $p->attributes;
+                    }
+                    else {
+                        $f['place'] = 'not found';
+                    }
+                    break;
+
+            }
+        }
+        
+		if($s == null){
+			$this->respondJSONCode(404);
+		}else{
+			$this->respondJSON( $result );	
+		}
+	}
     
 }

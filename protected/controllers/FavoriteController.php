@@ -81,6 +81,12 @@ class FavoriteController extends BaseController
                     $this->respondJSON( 'Product not found', 400 );	
                 }
                 break;
+            case 'PLACE':
+                $p = Place::model()->findByPk($m->ELEMENT_ID);
+                if(!($p instanceof Place)) {
+                    $this->respondJSON( 'Place not found', 400 );	
+                }
+                break;
         }
         
         if($m->save())
@@ -92,7 +98,6 @@ class FavoriteController extends BaseController
 	public function actionView($id){
 		$m = $this->loadModel($id, false);
         $res = Util::model2Array($m, array('subscription'));
-        //$res['suscription'] = $m->subscription->attributes;
         
         //agregar los demas casos Establecimientos, mensaje?
         switch(strtoupper($m->TYPE)) {
@@ -107,9 +112,6 @@ class FavoriteController extends BaseController
                 break;
             
         }
-        //print_r($m->relations());
-        //print_r($m->subscription->attributes);
-        //return;
 		if($m == null){
 			$this->respondJSONCode(404);
 		}else{
