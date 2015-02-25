@@ -57,7 +57,7 @@ class FavoriteController extends BaseController
         if(empty($put_vars))
         {
             $this->respondJSON( array('error'=>'Bad request', 'expected'=>'SUBSCRIPTION_ID or PHONE, TYPE, ELEMENT_ID'), 400 );
-            Yii::app()->end();
+            //Yii::app()->end(); -- respondJSON hace llamado a Yii::app()-end();
         }
         
         $m = new $this->mModel;
