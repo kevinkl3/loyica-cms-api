@@ -46,9 +46,9 @@ class Zone extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'eSTABLECIMIENTOs' => array(self::HAS_MANY, 'ESTABLECIMIENTO', 'PAIS_ID'),
-			'mENSAJEs' => array(self::MANY_MANY, 'MENSAJE', 'MENSAJE_PAIS(PAIS_ID, MENSAJE_ID)'),
-			'pRODUCTOs' => array(self::MANY_MANY, 'PRODUCTO', 'PRODUCTO_PAIS(PAIS_ID, PRODUCTO_ID)'),
+			'places' => array(self::HAS_MANY, 'Place', 'PAIS_ID'),
+			'notifications' => array(self::MANY_MANY, 'Notification', 'MENSAJE_PAIS(PAIS_ID, MENSAJE_ID)'),
+			'products' => array(self::MANY_MANY, 'Product', 'PRODUCTO_PAIS(PAIS_ID, PRODUCTO_ID)'),
 		);
 	}
 

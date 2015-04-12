@@ -50,6 +50,9 @@ return array(
                 array('<controller>/update', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'PUT'),
                 array('<controller>/labels', 'pattern'=>'<controller:\w+>/labels', 'verb'=>'GET'),
                 
+                //advanced REST patterns
+                array('<controller>/viewRelated', 'pattern'=>'<controller:\w+>/<id:\d+>/<relatedname:\w+>', 'verb'=>'GET'),
+
 				//'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
@@ -64,7 +67,7 @@ return array(
 			'connectionString' => 'mysql:host=localhost;dbname=LOYICA_INSTANCE',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'root123',
+			'password' => '',
 			'charset' => 'utf8',
 		),
 		

@@ -63,10 +63,10 @@ class Place extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'aTRIBUTOESTABLECIMIENTOs' => array(self::HAS_MANY, 'ATRIBUTOESTABLECIMIENTO', 'ESTABLECIMIENTO_ID'),
-			'cOMODIDADs' => array(self::MANY_MANY, 'COMODIDAD', 'COMODIDAD_ESTABLECIMIENTO(ESTABLECIMIENTO_ID, COMODIDAD_ID)'),
-			'pAIS' => array(self::BELONGS_TO, 'PAIS', 'PAIS_ID'),
-			'tIPOESTABLECIMIENTOs' => array(self::MANY_MANY, 'TIPOESTABLECIMIENTO', 'ESTABLECIMIENTO_TIPO_ESTABLECIMIENTO(ESTABLECIMIENTO_ID, TIPO_ESTABLECIMIENTO_ID)'),
+			'attributes' => array(self::HAS_MANY, 'ATRIBUTOESTABLECIMIENTO', 'ESTABLECIMIENTO_ID'),
+			'services' => array(self::MANY_MANY, 'COMODIDAD', 'COMODIDAD_ESTABLECIMIENTO(ESTABLECIMIENTO_ID, COMODIDAD_ID)'),
+			'zone' => array(self::BELONGS_TO, 'Zone', 'PAIS_ID'),
+			'placetype' => array(self::MANY_MANY, 'TIPOESTABLECIMIENTO', 'ESTABLECIMIENTO_TIPO_ESTABLECIMIENTO(ESTABLECIMIENTO_ID, TIPO_ESTABLECIMIENTO_ID)'),
 		);
 	}
 

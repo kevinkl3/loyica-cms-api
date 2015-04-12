@@ -2,7 +2,7 @@
 class BaseController extends Controller{
 	
 	protected $mModel;
-	protected $filternames = array('per','page','pluck');
+	protected $filternames = array('per','page','pluck','latlng');
 	protected $filterdefaults = array('per'=>10,'page'=>1);
 
 	function respondJSONCode($pCode){
@@ -13,13 +13,20 @@ class BaseController extends Controller{
 			case 200: $msg = "Ok.";break;
 			case 406: $msg = "Not Acceptable.";break;
 		}
-		$this->respondJSON($msg,$pCode);
+		$this->respondJSON(null,$pCode,$msg);
 	}
 
-	function respondJSON($responseValue="ok",$code=200){
+	function respondJSON($responseValue=null,$code=200,$msg="Ok"){
         header('Content-type: application/json');
         header("Access-Control-Allow-Origin: *");
-        echo json_encode( array('code'=>$code,'value'=>$responseValue) );
+        
+        $responseObject = array('code'=>$code,'value'=>$responseValue);
+        
+        if($responseValue == null){
+        	$responseObject['msg'] = $msg;
+        }
+
+        echo json_encode( $responseObject );
         Yii::app()->end(); //rompe el ciclo, para que no siga con el codigo e imprima mas json, problemas de logica (eliminar este comentario si esta bien)
     }
 
@@ -82,6 +89,22 @@ class BaseController extends Controller{
 			$this->respondJSON( $m );	
 		}
 	}
+
+	/*
+	* View a set of elements related
+	* to another element
+	*/
+	public function actionViewRelated($id,$relatedname){
+		$m = $this->loadModel($id,false);
+        
+		if($m == null){
+			$this->respondJSONCode(404);
+		}else if(isset($m->$relatedname)){//if($m->hasRelated($relatedname) || true){
+			$this->respondJSON( Util::model2Array($m->$relatedname) );
+		}
+		$this->respondJSONCode(400);
+	}
+
     
     /**
     *Delete element by id
@@ -172,6 +195,17 @@ class BaseController extends Controller{
 						$pDBCriteria->limit = $this->filterdefaults['per'];
 					}
 					$pDBCriteria->offset = $pDBCriteria->limit * (intval($pFilter['v'])-1);
+				}
+				break;
+			}
+			case 'latlng':{
+				$parts = explode(",", $pFilter['v']);
+				if(count($parts) == 2){
+					$lat = floatval($parts[0]);
+					$lng = floatval($parts[1]);
+					if($lat != 0 && $lng != 0){
+						$pDBCriteria->order = "(($lat - LATITUD) * ($lat - LATITUD) + ($lng - LONGITUD) * ($lng - LONGITUD) * POW(COS(RADIANS($lat)),2)) ASC";
+					}
 				}
 				break;
 			}
