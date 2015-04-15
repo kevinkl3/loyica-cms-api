@@ -122,7 +122,7 @@ class PlaceController extends BaseController{
 	 * Lists all models.
 	 */
 	public function actionIndex(){
-		$this->respondJSON( $this->filter() );
+		$this->respondJSON( $this->filter(array('services')) );
 	}
 
 }

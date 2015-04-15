@@ -213,7 +213,8 @@ class BaseController extends Controller{
 	}
 
 
-	public function filter(){
+    //with es un arreglo en donde se puede incluir las relaciones
+	public function filter(array $with=null){
 		$fs = $this->getFilters();
 		$criteria = new CDbCriteria();
 		$criteria->limit = -1;
@@ -234,8 +235,8 @@ class BaseController extends Controller{
 			$params[$pid] = $value;
 		}
 		$criteria->params = $params;
-
-		return  Util::model2Array( $this->mModel->findAll($criteria) );
+        
+            return  Util::model2Array( $this->mModel->with($with)->findAll($criteria) );
 	}
 
 	/**
