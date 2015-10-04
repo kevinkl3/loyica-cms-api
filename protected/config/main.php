@@ -19,6 +19,7 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'ext.easyimage.EasyImage'
 	),
 
 	'modules'=>array(
@@ -35,6 +36,15 @@ return array(
 
 	// application components
 	'components'=>array(
+		'easyImage' => array(
+			'class' => 'application.extensions.easyimage.EasyImage',
+			//'driver' => 'Imagick',
+			//'quality' => 100,
+			'cachePath' => '/assets/easyimage/',
+			//'cacheTime' => 2592000,
+			//'retinaSupport' => false,
+		),
+
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
@@ -45,6 +55,7 @@ return array(
 			'urlFormat'=>'path',
 			'rules'=>array(
                 array('<controller>/view', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'GET'),
+                array('<controller>/view', 'pattern'=>'<controller:\w+>/<name:.+\.\w+>', 'verb'=>'GET'),//For images
                 array('<controller>/delete', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'DELETE'),
                 array('<controller>/create', 'pattern'=>'<controller:\w+>', 'verb'=>'POST'),
                 array('<controller>/update', 'pattern'=>'<controller:\w+>/<id:\d+>', 'verb'=>'PUT'),

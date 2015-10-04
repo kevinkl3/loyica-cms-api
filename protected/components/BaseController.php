@@ -260,7 +260,7 @@ class BaseController extends Controller{
         	return  Util::model2Array( $this->mModel->findAll($criteria) );
         }catch(Exception $e){
         	print_r($e);
-        	return array();
+        	return array(json_encode($e));
         }
 	}
 
