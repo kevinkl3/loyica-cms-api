@@ -2,7 +2,7 @@
 class BaseController extends Controller{
 	
 	protected $mModel;
-	protected $filternames = array('per','page','pluck','latlng');
+	protected $filternames = array('per','page','pluck','latlng','search','like');
 	protected $filterdefaults = array('per'=>10,'page'=>1);
 
 	function respondJSONCode($pCode){
@@ -15,6 +15,10 @@ class BaseController extends Controller{
 		}
 		$this->respondJSON(null,$pCode,$msg);
 	}
+  
+  function filterOrDefault($filterName){
+    return isset($_GET[$filterName]) ? $_GET[$filterName] : $this->filterdefaults[$filterName];
+  }
 
 	function respondJSON($responseValue=null,$code=200,$msg="Ok"){
         header('Content-type: application/json');
@@ -181,11 +185,22 @@ class BaseController extends Controller{
     
     
 
-	public function applyFilter($pDBCriteria,$pFilter){
+	public function applyFilter(&$pDBCriteria,$pFilter){
 		switch($pFilter['f']){
 			case 'per':{
 				if(intval($pFilter['v']) > 0){
 					$pDBCriteria->limit = $pFilter['v'];
+				}
+				break;
+			}
+			case 'search':{
+				$attr = $this->filterOrDefault('like');
+				if(is_array($attr)){
+					foreach($attr as $attribute){
+						$pDBCriteria->addSearchCondition(strtoupper($attribute),$pFilter['v']);
+					}
+				}else{
+					$pDBCriteria->addSearchCondition(strtoupper($attr),$pFilter['v']);
 				}
 				break;
 			}
@@ -217,11 +232,13 @@ class BaseController extends Controller{
 	public function filter(array $with=null){
 		$fs = $this->getFilters();
 		$criteria = new CDbCriteria();
-		$criteria->limit = -1;
+		
+		$filtersCriteria = new CDbCriteria();
+		$filtersCriteria->limit = -1;
 		
 		//Apply Filters like pagination
 		foreach($fs as $f){
-			$this->applyFilter($criteria,$f);
+			$this->applyFilter($filtersCriteria,$f);
 		}
 
 		//Conditions based on the Model Attributes
@@ -234,9 +251,17 @@ class BaseController extends Controller{
 			$criteria->addCondition( $key . " = " . $pid );
 			$params[$pid] = $value;
 		}
+
 		$criteria->params = $params;
-        
-            return  Util::model2Array( $this->mModel->with($with)->findAll($criteria) );
+
+		$criteria->mergeWith( $filtersCriteria );
+
+        try {
+        	return  Util::model2Array( $this->mModel->findAll($criteria) );
+        }catch(Exception $e){
+        	print_r($e);
+        	return array();
+        }
 	}
 
 	/**

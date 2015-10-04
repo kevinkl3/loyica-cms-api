@@ -4,6 +4,7 @@ class PlaceController extends BaseController{
 
 	protected function beforeAction( $action){
 		$this->mModel = Place::model();
+		$this->filterdefaults['like'] = 'NOMBRE';
 		return parent::beforeAction($action);
 	}
 
